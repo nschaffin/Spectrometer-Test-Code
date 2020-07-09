@@ -6,5 +6,5 @@ This is a repository dedicated to testing the code for the Flame-VIS-NIR spectro
 
 * Python 3.7 (set to PATH preferably)
 * Install seabreeze library through pip
-	'pip install seabreeze'
-	'seabreeze_os_setup'
+	* 'pip install seabreeze'
+	* 'seabreeze_os_setup'
