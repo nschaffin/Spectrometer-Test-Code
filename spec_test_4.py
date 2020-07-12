@@ -43,7 +43,7 @@ class Spectrometer():
 		return None
 
 
-	def sample(self, milliseconds, trigger):
+	def sample(self, microseconds, trigger):
 		"""
 		This function is used to signal the spectrometer to integrate for a set amount of time.
 
@@ -55,9 +55,7 @@ class Spectrometer():
 		
 		try:
 			self.spec.trigger_mode = trigger 							# Setting the trigger mode to normal
-			self.spec.integration_time_micros(milliseconds) 			# Set integration time for spectrometer
-			self.spectrometer_state.integrate()
-			self.oasis_serial.sendBytes(b'\x01') 						# Sending nominal responce
+			self.spec.integration_time_micros(microseconds) 			# Set integration time for spectrometer
 			try:
 				wavelengths, intensities = self.spec.spectrum() 		# Returns wavelengths and intensities as a 2D array, and begins sampling
 			except:
@@ -65,13 +63,10 @@ class Spectrometer():
 				return 'An error occurred while attempting to sample' 	# Command to sample didn't work properly
 
 			data = wavelengths, intensities 							# Saving 2D array to variable data
+			self.data = data
 			if data == []:
 				return 'No data entered' 								# Error handling for no data collected
-			self.oasis_serial.sendBytes(b'\x30') 						# Code sent to spectrometer signaling sampling has successfully finished
 
-			timestamp = time.time() 									# Returns # of seconds since Jan 1, 1970 (since epoch)
-			self.fm.save_sample(timestamp, data) 						# Function call to create spectrometer file
-			self.spectrometer_state.on_standby()
 		except:
 			self.spec_reestablish_connection()
 			return 'Attempting to Reconnect Spectrometer'
@@ -83,6 +78,7 @@ class Spectrometer():
 		# 0 = standby, 1 = integrating, 2 = disconnected
 		self.states_spectrometer = 2
 		self.spec = self._setupSpectrometer()
+		self.data = []
 
 
 spectrometer = Spectrometer()
@@ -94,12 +90,15 @@ while True:
 	if t_mode == '0':
 		spectrometer.sample(time, t_mode)		# Normal Trigger
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
+		print("Spectrometer's collected data: {}".format(spectrometer.data))
 	elif t_mode == '1':
 		spectrometer.sample(time, t_mode)		# External Hardware Level Trigger Mode
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
+		print("Spectrometer's collected data: {}".format(spectrometer.data))
 	elif t_mode == '3': 
 		spectrometer.sample(time, t_mode)		# External Hardware Edge Trigger Mode
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
+		print("Spectrometer's collected data: {}".format(spectrometer.data))
 	elif t_mode == "q":
 		quit()
 	else:
