@@ -10,7 +10,7 @@ def connect():
 		spec1 = spec_list[0]
 		print("Spectrometer successfully connected")
 	except:
-		print("Spectrometer failed to connect. Try again")
+		print("Spectrometer failed to connect. Make sure everything is connected and then run 'connect()' again")
 
 """
 Tests disconnection during integration

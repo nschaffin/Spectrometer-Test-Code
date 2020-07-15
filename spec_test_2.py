@@ -3,7 +3,7 @@ import seabreeze.spectrometers
 from seabreeze.spectrometers import Spectrometer
 
 # Step 1 and step 4
-def connect_to_spectrometer():
+def test_spectrometer():
 	# Test list_devices
 	try:
 		spec_list = seabreeze.spectrometers.list_devices()
@@ -33,7 +33,7 @@ def connect_to_spectrometer():
 
 	# Test integrating when it's disconnected but the spectrometers are still listed
 	try:
-		spec1.integration_time_micros(1000)		# insert shortest integration time here
+		spec1.integration_time_micros(5000)		# insert shortest integration time here
 		wavelengths = spec1.wavelengths()
 		print(f"Wavelengths: {wavelengths}")
 	except:
@@ -54,7 +54,7 @@ def check_spectrometer():
 
 	# Test integrating when it's disconnected but the spectrometers are still listed
 	try:
-		spec1.integration_time_micros(1000)		# insert shortest integration time here
+		spec1.integration_time_micros(5000)		# insert shortest integration time here
 		wavelengths = spec1.wavelengths()
 		print(f"Wavelengths: {wavelengths}")
 	except:
