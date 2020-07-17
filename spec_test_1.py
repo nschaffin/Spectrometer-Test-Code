@@ -25,12 +25,14 @@ class Spectrometer():
 
 
 	def spec_reestablish_connection(self):
-		if self.spec == None:
+		listed = seabreeze.spectrometers.list_devices()
+		print(listed)
+		if listed == []:
 			self.states_spectrometer = 2
 			for _ in range(3):												# Giving the spectrometer 3 attempts to connect
 				tyme.sleep(1.5)
-				import seabreeze
-				import seabreeze.spectrometers
+				#import seabreeze
+				#import seabreeze.spectrometers
 				try:
 					self.spec = self._setupSpectrometer()
 					print("--------------------------------------")
@@ -45,7 +47,8 @@ class Spectrometer():
 		return None
 
 	def spec_reestablish_connection_without_import(self):
-		if self.spec == None:
+		listed = seabreeze.spectrometers.list_devices()
+		if listed == []:
 			self.states_spectrometer = 2
 			for _ in range(3):												# Giving the spectrometer 3 attempts to connect
 				tyme.sleep(1.5)
