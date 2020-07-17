@@ -26,23 +26,29 @@ class Spectrometer():
 
 	def spec_reestablish_connection(self):
 		listed = seabreeze.spectrometers.list_devices()
-		print(listed)
 		if listed == []:
 			self.states_spectrometer = 2
-			for _ in range(3):												# Giving the spectrometer 3 attempts to connect
-				tyme.sleep(1.5)
+			for i in range(3):												# Giving the spectrometer 3 attempts to connect
 				try:
 					self.spec = self._setupSpectrometer()
 					print("--------------------------------------")
+					if i < 2:
+						sleep_timers.sleep(1.5)
 					if self.states_spectrometer != 2:
 						break
 				except:
 					continue
-		tyme.sleep(1)
+		
 		if self.states_spectrometer != 2:
 			return "\nSpectrometer {} successfully connected!\n".format(self.spec)
+
 		print("\nWARNING: No spectrometer connected, check connection...\n")
 		return None
+
+	def __init__(self):
+		# 0 = standby, 1 = integrating, 2 = disconnected
+		self.states_spectrometer = 2
+		self.spec = self._setupSpectrometer()
 
 
 	def sample(self, microseconds, trigger):

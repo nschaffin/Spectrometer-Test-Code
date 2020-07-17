@@ -1,7 +1,7 @@
 """
 Manages communication with the spectrometer through the SeaBreeze library.
 """
-import time as tyme
+import time as sleep_timers
 
 import seabreeze
 import seabreeze.spectrometers
@@ -26,23 +26,24 @@ class Spectrometer():
 
 	def spec_reestablish_connection(self):
 		listed = seabreeze.spectrometers.list_devices()
-		print(listed)
 		if listed == []:
 			self.states_spectrometer = 2
-			for _ in range(3):												# Giving the spectrometer 3 attempts to connect
-				tyme.sleep(1.5)
+			for i in range(3):												# Giving the spectrometer 3 attempts to connect
 				#import seabreeze
 				#import seabreeze.spectrometers
 				try:
 					self.spec = self._setupSpectrometer()
 					print("--------------------------------------")
+					if i < 2:
+						sleep_timers.sleep(1.5)
 					if self.states_spectrometer != 2:
 						break
 				except:
 					continue
-		tyme.sleep(1)
+		
 		if self.states_spectrometer != 2:
 			return "\nSpectrometer {} successfully connected!\n".format(self.spec)
+
 		print("\nWARNING: No spectrometer connected, check connection...\n")
 		return None
 
@@ -50,18 +51,20 @@ class Spectrometer():
 		listed = seabreeze.spectrometers.list_devices()
 		if listed == []:
 			self.states_spectrometer = 2
-			for _ in range(3):												# Giving the spectrometer 3 attempts to connect
-				tyme.sleep(1.5)
+			for i in range(3):												# Giving the spectrometer 3 attempts to connect
 				try:
 					self.spec = self._setupSpectrometer()
 					print("--------------------------------------")
+					if i < 2:
+						sleep_timers.sleep(1.5)
 					if self.states_spectrometer != 2:
 						break
 				except:
 					continue
-		tyme.sleep(1)
+		
 		if self.states_spectrometer != 2:
 			return "\nSpectrometer {} successfully connected!\n".format(self.spec)
+
 		print("\nWARNING: No spectrometer connected, check connection...\n")
 		return None
 
