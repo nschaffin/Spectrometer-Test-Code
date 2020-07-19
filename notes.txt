@@ -1,0 +1,5 @@
+1. We can't choose list_devices because it returns a string, need to cast Spectrometer on it (the one from the seabreeze library)
+2. No need to reimport
+3. Choose from_first_available() works fine
+4. Cannot reimport, leads to an error
+5. Blinks only once? Need more testing

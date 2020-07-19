@@ -2,25 +2,28 @@ import seabreeze
 import seabreeze.spectrometers
 from seabreeze.spectrometers import Spectrometer
 
+spec1 = ''
+
 # Step 1 and step 4
 def test_spectrometer():
+	global spec1
+	# Test from_first_available
+	try:
+		first_spec = seabreeze.spectrometers.Spectrometer.from_first_available()
+		print(f"The first available device is: {first_spec}")
+	except:
+		print("Error with from_first_available function")
+
 	# Test list_devices
 	try:
 		spec_list = seabreeze.spectrometers.list_devices()
 		if spec_list == []:
 			print("ERROR: No spectrometers listed.")
 		else:
-			spec1 = spec_list[0]
+			spec1 = seabreeze.spectrometers.Spectrometer(spec_list[0])
 			print(f"The devices listed are: {spec_list}. The spectrometer selected is: {spec1}")
 	except:
 		print("Error with list_devices function")
-
-	# Test from_first_available
-	try:
-		first_spec = seabreeze.spectrometers.Spectrometer.from_first_available
-		print(f"The first available device is: {first_spec}")
-	except:
-		print("Error with from_first_available function")
 
 	# Compare the results of both spectrometers
 	try:
@@ -28,6 +31,10 @@ def test_spectrometer():
 			print("list_devices and from_first_available give the same spectrometer")
 		else:
 			print("list_devices and from_first_available give different spectrometers")
+			try:
+				spec1.integration_time_micros(5000)
+			except:
+				spec1 = first_spec
 	except:
 		print("Error comparing spectrometers")
 
@@ -42,6 +49,7 @@ def test_spectrometer():
 
 # Step 2 and 3
 def check_spectrometer():
+	global spec1
 	# Test list_devices
 	try:
 		spec_list = seabreeze.spectrometers.list_devices()
@@ -60,6 +68,8 @@ def check_spectrometer():
 	except:
 		print("Failed to get wavelengths as expected")
 	print("\n")
+
+
 """
 Connect:
 check devices
