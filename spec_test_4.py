@@ -25,22 +25,30 @@ class Spectrometer():
 
 
 	def spec_reestablish_connection(self):
-		if self.spec == None:
+		listed = seabreeze.spectrometers.list_devices()
+		if listed == []:
 			self.states_spectrometer = 2
-			for _ in range(3):												# Giving the spectrometer 3 attempts to connect
-				tyme.sleep(1.5)
+			for i in range(3):												# Giving the spectrometer 3 attempts to connect
 				try:
 					self.spec = self._setupSpectrometer()
 					print("--------------------------------------")
+					if i < 2:
+						sleep_timers.sleep(1.5)
 					if self.states_spectrometer != 2:
 						break
 				except:
 					continue
-		tyme.sleep(1)
+		
 		if self.states_spectrometer != 2:
 			return "\nSpectrometer {} successfully connected!\n".format(self.spec)
+
 		print("\nWARNING: No spectrometer connected, check connection...\n")
 		return None
+
+	def __init__(self):
+		# 0 = standby, 1 = integrating, 2 = disconnected
+		self.states_spectrometer = 2
+		self.spec = self._setupSpectrometer()
 
 
 	def sample(self, microseconds, trigger):
@@ -54,16 +62,34 @@ class Spectrometer():
 		"""
 		
 		try:
-			self.spec.trigger_mode = trigger 							# Setting the trigger mode to normal
+			self.spec.trigger_mode(trigger)								# Setting the trigger mode to normal
 			self.spec.integration_time_micros(microseconds) 			# Set integration time for spectrometer
 			try:
 				wavelengths, intensities = self.spec.spectrum() 		# Returns wavelengths and intensities as a 2D array, and begins sampling
 			except:
-				
+				return 'An error occurred while attempting to sample' 	# Command to sample didn't work properly
+			
+			self.data = wavelengths, intensities
+			print("Spectrometer's collected data: {}".format(self.data))
+			tyme.sleep(3)
+
+			try: 
+				wavelengths2, intensities2 = self.spec.spectrum()		# Sample a second time
+			except:
 				return 'An error occurred while attempting to sample' 	# Command to sample didn't work properly
 
-			data = wavelengths, intensities 							# Saving 2D array to variable data
-			self.data = data
+			self.data2 = wavelengths2, intensities2
+			print("Spectrometer's collected data: {}".format(self.data2))
+			tyme.sleep(5)
+
+			try: 
+				wavelengths3, intensities3 = self.spec.spectrum()		# Sample a second time
+			except:
+				return 'An error occurred while attempting to sample' 	# Command to sample didn't work properly
+
+			self.data3 = wavelengths3, intensities3
+			print("Spectrometer's collected data: {}".format(self.data3))
+
 			if data == []:
 				return 'No data entered' 								# Error handling for no data collected
 
@@ -74,31 +100,67 @@ class Spectrometer():
 
 
 
+
+
+	def sample_external(self, microseconds, trigger):
+		"""
+		This function is used to signal the spectrometer to integrate for a set amount of time.
+
+		Parameters
+		----------
+		milliseconds : int
+			Inputted integration time for spectrometer
+		"""
+		
+		try:
+			self.spec.trigger_mode(trigger)								# Setting the trigger mode to normal
+			self.spec.integration_time_micros(microseconds) 			# Set integration time for spectrometer
+			try:
+				wavelengths, intensities = self.spec.spectrum() 		# Returns wavelengths and intensities as a 2D array, and begins sampling
+			except:
+				
+				return 'An error occurred while attempting to sample' 	# Command to sample didn't work properly
+			
+			self.data_external = wavelengths, intensities
+			print("Spectrometer's collected data: {}".format(self.data_external))
+
+			if data == []:
+				return 'No data entered' 								# Error handling for no data collected
+
+		except:
+			self.spec_reestablish_connection()
+			return 'Attempting to Reconnect Spectrometer'
+		return None
+
+
+
+
+
 	def __init__(self):
 		# 0 = standby, 1 = integrating, 2 = disconnected
 		self.states_spectrometer = 2
 		self.spec = self._setupSpectrometer()
 		self.data = []
+		self.data2 = []
+		self.data3 = []
+		self.data_external = []
 
 
 spectrometer = Spectrometer()
 
-time = 10000		# 10 seconds
+time = 5000000		# 5 seconds
 
 while True:
 	t_mode = input("Input trigger mode (type q to quit): ")
 	if t_mode == '0':
-		spectrometer.sample(time, t_mode)		# Normal Trigger
+		spectrometer.sample(time, int(t_mode))				# Normal Trigger
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
-		print("Spectrometer's collected data: {}".format(spectrometer.data))
 	elif t_mode == '1':
-		spectrometer.sample(time, t_mode)		# External Hardware Level Trigger Mode
+		spectrometer.sample_external(time, int(t_mode))		# External Hardware Level Trigger Mode
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
-		print("Spectrometer's collected data: {}".format(spectrometer.data))
 	elif t_mode == '3': 
-		spectrometer.sample(time, t_mode)		# External Hardware Edge Trigger Mode
+		spectrometer.sample_external(time, int(t_mode))		# External Hardware Edge Trigger Mode
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
-		print("Spectrometer's collected data: {}".format(spectrometer.data))
 	elif t_mode == "q":
 		quit()
 	else:
