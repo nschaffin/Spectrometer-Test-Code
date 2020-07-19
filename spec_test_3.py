@@ -73,7 +73,7 @@ def compare_size():
 	try:
 		if len(size_array) == 1:
 			print(f"Test Failed... Unexpected Results... Size of arrays are the same. The size is {size_array[0]}")
-		else if (len(size_array)) == 2:
+		elif (len(size_array)) == 2:
 			print(f"Test Successful... Confirmed that size of arrays differ by integration time.")
 			print(f"Sizes of arrays are: {size_array}")
 		else:
