@@ -1,5 +1,6 @@
 import seabreeze
 import seabreeze.spectrometers
+import time
 
 spec1 = ''
 
@@ -13,6 +14,7 @@ def connect():
 		spec1 = seabreeze.spectrometers.Spectrometer(spec_list[0])
 		try:
 			spec1.integration_time_micros(5000)
+			time.sleep(1)
 		except:
 			spec1 = seabreeze.spectrometers.Spectrometer.from_first_available()
 			print("Needed to reconnect...")

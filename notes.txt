@@ -3,3 +3,5 @@
 3. Choose from_first_available() works fine
 4. Cannot reimport, leads to an error
 5. Blinks only once? Need more testing
+6. Needs some time to reconnect
+7. Run integration time micros 1 time?

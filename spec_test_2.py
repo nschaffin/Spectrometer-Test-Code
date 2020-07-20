@@ -1,6 +1,7 @@
 import seabreeze
 import seabreeze.spectrometers
 from seabreeze.spectrometers import Spectrometer
+import time
 
 spec1 = ''
 
@@ -24,20 +25,22 @@ def test_spectrometer():
 			print(f"The devices listed are: {spec_list}. The spectrometer selected is: {spec1}")
 	except:
 		print("Error with list_devices function")
-
 	# Compare the results of both spectrometers
 	try:
 		if first_spec == spec1:
 			print("list_devices and from_first_available give the same spectrometer")
 		else:
-			print("list_devices and from_first_available give different spectrometers")
+			print(f'first spec = {first_spec}, spec1 = {spec1}')
 			try:
 				spec1.integration_time_micros(5000)
+				time.sleep(1)
 			except:
 				spec1 = first_spec
+				print("\nChanged spectrometer\n")
 	except:
 		print("Error comparing spectrometers")
 
+	print(f'spec1 = {spec1}')
 	# Test integrating when it's disconnected but the spectrometers are still listed
 	try:
 		spec1.integration_time_micros(5000)		# insert shortest integration time here
@@ -46,6 +49,11 @@ def test_spectrometer():
 	except:
 		print("Failed to get wavelengths")
 	print("\n")
+
+def test():
+	spec1.integration_time_micros(5000)
+	spec1.integration_time_micros(5000)
+	spec1.integration_time_micros(5000)
 
 # Step 2 and 3
 def check_spectrometer():
