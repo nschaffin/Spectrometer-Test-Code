@@ -19,7 +19,6 @@ class Spectrometer():
 			return spec
 
 		self.states_spectrometer = 2
-		print("No spectrometer listed by seabreeze...\n")
 		return None
 
 
@@ -33,16 +32,19 @@ class Spectrometer():
 				#import seabreeze.spectrometers
 				try:
 					self.spec = self._setupSpectrometer()
-					print("--------------------------------------")
+					print("--------------------------")
 					if i < 2:
-						sleep_timers.sleep(1.5)
+						sleep_timers.sleep(1)
 					if self.states_spectrometer != 2:
 						break
 				except:
 					continue
 		
+		sleep_timers.sleep(.2)
+
 		if self.states_spectrometer != 2:
-			return "\nSpectrometer {} successfully connected!\n".format(self.spec)
+			print("\nSpectrometer {} successfully connected!\n".format(self.spec))
+			return None
 
 		print("\nWARNING: No spectrometer connected, check connection...\n")
 		return None
@@ -54,16 +56,19 @@ class Spectrometer():
 			for i in range(3):												# Giving the spectrometer 3 attempts to connect
 				try:
 					self.spec = self._setupSpectrometer()
-					print("--------------------------------------")
+					print("--------------------------")
 					if i < 2:
-						sleep_timers.sleep(1.5)
+						sleep_timers.sleep(1)
 					if self.states_spectrometer != 2:
 						break
 				except:
 					continue
 		
+		sleep_timers.sleep(.2)
+
 		if self.states_spectrometer != 2:
-			return "\nSpectrometer {} successfully connected!\n".format(self.spec)
+			print("\nSpectrometer {} successfully connected!\n".format(self.spec))
+			return None
 
 		print("\nWARNING: No spectrometer connected, check connection...\n")
 		return None
@@ -77,29 +82,27 @@ subtest = input("Please enter which subtest you would like to perform (1, 2, or 
 
 if subtest == '1':
 	spectrometer = Spectrometer()
-	print("Spectrometers listed: {}\n".format(spectrometer.spec))
 	print("Spectrometer's current state: {}".format(spectrometer.states_spectrometer))
+	print("-------------------------------")
 	spectrometer.spec_reestablish_connection()
-	print("Spectrometer's current state: {}".format(spectrometer.states_spectrometer))
+	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
 elif subtest == '2':
 	spectrometer = Spectrometer()
-	print("Spectrometers listed: {}\n".format(spectrometer.spec))
 	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
-	input("Please unplug spectrometer before proceeding.\nOnce unplugged, please enter in any character to confirm: ")
+	input("Unplug spectrometer before proceeding, once done type any character then hit enter: ")
 	spectrometer.spec_reestablish_connection()
 	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
-	input("Now, please plug spectrometer back in before proceeding.\nOnce plugged in, please enter in any character to confirm: ")
+	input("Now, plug spectrometer back in before proceeding, once done type any character then hit enter: ")
 	spectrometer.spec_reestablish_connection()
-	print("Spectrometer's current state: {}".format(spectrometer.states_spectrometer))
+	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
 elif subtest == '3':
 	spectrometer = Spectrometer()
-	print("Spectrometers listed: {}\n".format(spectrometer.spec))
 	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
-	input("Please unplug spectrometer before proceeding.\nOnce unplugged, please enter in any character to confirm: ")
+	input("Unplug spectrometer before proceeding, once done type any character then hit enter: ")
 	spectrometer.spec_reestablish_connection_without_import()
 	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
-	input("Now, please plug spectrometer back in before proceeding.\nOnce plugged in, please enter in any character to confirm: ")
+	input("Now, plug spectrometer back in before proceeding, once done type any character then hit enter: ")
 	spectrometer.spec_reestablish_connection_without_import()
-	print("Spectrometer's current state: {}".format(spectrometer.states_spectrometer))
+	print("Spectrometer's current state: {}\n".format(spectrometer.states_spectrometer))
 else:
 	print("\nInvalid subtest, please run this program again")
