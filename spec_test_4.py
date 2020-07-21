@@ -165,14 +165,17 @@ while True:
 	t_mode = input("Input trigger mode (type q to quit): ")
 	if t_mode == '0':
 		spectrometer.check_connection()
+		print("\nSpectrometer connected: {}".format(spectrometer.spec))
 		spectrometer.sample(time, int(t_mode))				# Normal Trigger
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
 	elif t_mode == '1':
 		spectrometer.check_connection()
+		print("\nSpectrometer connected: {}".format(spectrometer.spec))
 		spectrometer.sample_external(time, int(t_mode))		# External Hardware Level Trigger Mode
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
 	elif t_mode == '3': 
 		spectrometer.check_connection()
+		print("\nSpectrometer connected: {}".format(spectrometer.spec))
 		spectrometer.sample_external(time, int(t_mode))		# External Hardware Edge Trigger Mode
 		print("Spectrometer's Current Status: {}\n".format(spectrometer.states_spectrometer))
 	elif t_mode == "q":
