@@ -4,6 +4,7 @@ Manages communication with the spectrometer through the SeaBreeze library.
 import time as sleep_timers
 
 import seabreeze
+seabreeze.use('pyseabreeze')
 import seabreeze.spectrometers
 
 
@@ -26,7 +27,7 @@ class Spectrometer():
 		print("\nSpectrometers Detected: {}\n".format(devices))				# This will print out all devices listed by seabreeze library
 		if devices != []:
 			self.states_spectrometer = 0
-			spec = seabreeze.spectrometers.Spectrometer(devices[0])
+			self.spec = seabreeze.spectrometers.Spectrometer(devices[0])
 			return spec
 
 		self.states_spectrometer = 2
@@ -81,12 +82,8 @@ class Spectrometer():
 		milliseconds : int
 			Inputted integration time for spectrometer
 		"""
-		try:
-			self.spec.trigger_mode(trigger)								# Setting the trigger mode to normal
-			self.spec.integration_time_micros(microseconds) 			# Set integration time for spectrometer
-		except:
-			print('\nSpectrometer not set up properly\n')
-			return None
+		self.spec.trigger_mode(trigger)								# Setting the trigger mode to normal
+		self.spec.integration_time_micros(microseconds) 			# Set integration time for spectrometer
 
 		try:
 			wavelengths, intensities = self.spec.spectrum() 		# Returns wavelengths and intensities as a 2D array, and begins sampling
