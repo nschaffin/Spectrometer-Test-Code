@@ -34,6 +34,7 @@ Test Stuff:
     * None of these classes reimport seabreeze, since this will lead to failure. If needed, either use initialize() or use unbind/rebind console commands to reset spectrometer drivers
     * Cseabreeze has precedence over pyseabreeze, using the 'seabreeze.use('pyseabreeze')' command will force your program to use pyseabreeze (though this is rather buggy)
     * Use wavelengths_integrate() and intensities_integrate() to see if we can figure out why they don't integrate for the proper duration
+    * All integration functions also feature length outputs for each list of values
     * Spec_test_4.py is fixed, but this program incorporates mostly if not all features from previous tests
     * We are using list_devices() to setup spectrometer instead of from_first_available(), this can be swapped out if needed
     * Also, we should see if the spectrometer only blinks once for everytime the spectrometer integrates in especially in multiple_integrate()
@@ -120,9 +121,12 @@ class Spectrometer():
             wavelengths, intensities = self.spec.spectrum()
             spectrum = wavelengths, intensities
 
-            print("\nSpectrum: {}\n".format(spectrum))
-            print("Wavelengths only: {}\n".format(wavelengths))
-            print("Intensities only: {}\n".format(intensities))
+            print("\nSpectrum: {}".format(spectrum))
+            print("Spectrum length: {}\n".format(len(spectrum)))
+            print("Wavelengths only: {}".format(wavelengths))
+            print("Wavelengths length: {}\n".format(len(wavelengths)))
+            print("Intensities only: {}".format(intensities))
+            print("Intensities length: {}\n".format(len(intensities)))
         else:
             print("\nPlease set up your spectrometer and retry...\n")
         return None
@@ -141,7 +145,8 @@ class Spectrometer():
 
             wavelengths = self.spec.get_wavelengths()
 
-            print("\nWavelengths: {}\n".format(wavelengths))
+            print("\nWavelengths: {}".format(wavelengths))
+            print("Wavelengths length: {}\n".format(len(wavelengths)))
         else:
             print("\nPlease set up your spectrometer and retry...\n")
         return None
@@ -160,7 +165,8 @@ class Spectrometer():
 
             intensities = self.spec.get_intensities()
 
-            print("\nIntensities: {}\n".format(intensities))
+            print("\nIntensities: {}".format(intensities))
+            print("Intensities length: {}\n".format(len(intensities)))
         else:
             print("\nPlease set up your spectrometer and retry...\n")
         return None
@@ -191,11 +197,14 @@ class Spectrometer():
                         print("Integration number: {}\n".format(n+1))
                         
                         if integration_type == 0:
-                            print("Spectrum: {}\n".format(spectrum))
+                            print("Spectrum: {}".format(spectrum))
+                            print("Spectrum length: {}\n".format(len(spectrum)))
                         elif integration_type == 1:
-                            print("Wavelengths: {}\n".format(wavelengths))
+                            print("Wavelengths: {}".format(wavelengths))
+                            print("Wavelengths length: {}\n".format(len(wavelengths)))
                         elif integration_type == 2:
-                            print("Intensities: {}\n".format(intensities))
+                            print("Intensities: {}".format(intensities))
+                            print("Intensities length: {}\n".format(len(intensities)))
 
                         print(("Spectrum length: {}\n".format(len(spectrum))))
                         print("-----------------------\n")
