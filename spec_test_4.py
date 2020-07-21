@@ -23,15 +23,17 @@ class Spectrometer():
 
 
 	def _setupSpectrometer(self):
-		devices = seabreeze.spectrometers.list_devices()
-		print("\nSpectrometers Detected: {}\n".format(devices))				# This will print out all devices listed by seabreeze library
-		if devices != []:
-			self.states_spectrometer = 0
-			self.spec = seabreeze.spectrometers.Spectrometer(devices[0])
-			return spec
-
-		self.states_spectrometer = 2
-		return None
+        devices = seabreeze.spectrometers.list_devices()
+        print("\nSpectrometers Connected to USB: {}\n".format(devices))
+        if devices != []:
+            self.states_spectrometer = 0                                    # Standby state
+            self.spec = seabreeze.spectrometers.Spectrometer(devices[0])
+            print("You have connected {}\n".format(self.spec))
+            return None
+        else:
+            print("No spectrometer available for connection...\n")
+            self.states_spectrometer = 2                                    # Disconnected state
+            return None
 
 	def check_connection(self):
 		listed = seabreeze.spectrometers.list_devices()
