@@ -206,7 +206,6 @@ class Spectrometer():
                             print("Intensities: {}".format(intensities))
                             print("Intensities length: {}\n".format(len(intensities)))
 
-                        print(("Spectrum length: {}\n".format(len(spectrum))))
                         print("-----------------------\n")
                         sleep_timers.sleep(1)
                         
