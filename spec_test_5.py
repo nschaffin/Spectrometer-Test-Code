@@ -45,9 +45,9 @@ Test Stuff:
     * We are using list_devices() to setup spectrometer instead of from_first_available(), this can be swapped out if needed
     * Also, we should see if the spectrometer only blinks once for everytime the spectrometer integrates in especially in multiple_integrate()
     * As a final side note, this program is also rather flexible, so you can just straight up use seabreeze commands instead of using the given functions
+    * As a final final side note, pyseabreeze seems to have a pretty bad backend from messing around with things before even testing, so I'd advise using the cseabreeze wrapper
 """
 import time as sleep_timers
-
 
 import seabreeze.pyseabreeze
 import seabreeze.cseabreeze
@@ -55,12 +55,14 @@ import seabreeze
 import seabreeze.spectrometers
 seabreeze.use("cseabreeze")
 
+import usb.core
+import usb.util
 
 class Spectrometer():
     
     def __init__(self):
         self.spec = self.connect()
-        self.states_spectrometer = 2
+        self.states_spectrometer = 0
     
     def connect(self):
         """
@@ -100,9 +102,15 @@ class Spectrometer():
         """
         if self.states_spectrometer == 0:
             if test_num == 0:
-                seabreeze.pyseabreeze.SeaBreezeAPI.initialize()
-            if test_num == 1:
-                seabreeze.cseabreeze.SeaBreezeAPI.initialize()
+                psbAPI = seabreeze.pyseabreeze.SeaBreezeAPI()   # Making pyseabreeze backend API object
+                psbAPI.initialize()                             # Seems that the pyseabreeze backend doesn't support this function
+            elif test_num == 1:
+                csbAPI = seabreeze.cseabreeze.SeaBreezeAPI()    # Making cseabreeze backend API object
+                csbAPI.initialize()                             # This is the only one i've gotten working
+            else:
+                print("\nInvalid test number\n")
+                return None
+
             print("\nDevices now present: {}\n".format(seabreeze.spectrometers.list_devices()))
         else:
             print("\nPlease set up your spectrometer and retry...\n")
@@ -267,4 +275,4 @@ class Spectrometer():
 
 
 spectrometer = Spectrometer()
-# Make a second object and see if that messes up 
+# Make a second object and see if that messes up
