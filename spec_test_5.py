@@ -55,8 +55,8 @@ import seabreeze
 import seabreeze.spectrometers
 seabreeze.use("cseabreeze")
 
-import usb.core
-import usb.util
+#import usb.core        # Not sure if pyusb is called already in the backend for pyseabreeze
+#import usb.util
 
 class Spectrometer():
     
@@ -96,11 +96,22 @@ class Spectrometer():
         return None
 
 
+    def _check_connection(self):                                            # Might make this a property, just checks/updates connectivity status
+        devices = seabreeze.spectrometers.list_devices()
+        if devices != []:
+            self.states_spectrometer = 0                                    # Standby state
+            self.spec = seabreeze.spectrometers.Spectrometer(devices[0])
+            return None
+        else:
+            self.states_spectrometer = 2                                    # Disconnected state
+            return None
+
     def initialize(self, test_num):                                                         # test_num(int): 0 - using pyseabreeze, 1 - using cseabreeze
         """
             This function is meant to reenumerate all spectrometers connected to a system
         """
-        if self.states_spectrometer == 0:
+        self._check_connection()
+        if self.states_spectrometer == 2:
             if test_num == 0:
                 psbAPI = seabreeze.pyseabreeze.SeaBreezeAPI()   # Making pyseabreeze backend API object
                 psbAPI.initialize()                             # Seems that the pyseabreeze backend doesn't support this function
@@ -113,13 +124,14 @@ class Spectrometer():
 
             print("\nDevices now present: {}\n".format(seabreeze.spectrometers.list_devices()))
         else:
-            print("\nPlease set up your spectrometer and retry...\n")
+            print("\nYour spectrometer has already been setup...\n")
         return None
 
     def min_max(self, test_num):                                        # test_num(int): 0 - limits, 1 - get limits
         """
             This function is meant to obtain a spectrometer's minimum and maximum integration times
         """
+        self._check_connection()
         if self.states_spectrometer == 0:
             if test_num == 0:
                 minMax = self.spec.integration_time_micros_limits
@@ -137,13 +149,18 @@ class Spectrometer():
         """
             This function is meant to print out all features available to a spectrometer
         """
-        print(self.spec.features)
+        self._check_connection()
+        if self.states_spectrometer == 2:
+            print("\nPlease set up your spectrometer and retry...\n")
+            return None
+        print("\n{}\n".format(self.spec.features))
         return None
     
     def quick_integrate(self, trigger, microseconds):                   # trigger(int) - trigger mode | microseconds(int) - integration time
         """
             This function is meant to integrate only once
         """
+        self._check_connection()
         if trigger < 0 or trigger > 3 or trigger == 2:
             print("\nInvalid trigger mode\n")
             return None
@@ -170,7 +187,8 @@ class Spectrometer():
         """
             This function is meant to grab only wavelengths from an integration
         """
-        if test_num != 0 or test_num != 1:
+        self._check_connection()
+        if test_num != 0 and test_num != 1:
             print("\nInvalid test number\n")
             return None
         if trigger < 0 or trigger > 3 or trigger == 2:
@@ -197,7 +215,8 @@ class Spectrometer():
         """
             This function is meant to grab only intesities from an integration
         """
-        if test_num != 0 or test_num != 1:
+        self._check_connection()
+        if test_num != 0 and test_num != 1:
             print("\nInvalid test number\n")
             return None
         if trigger < 0 or trigger > 3 or trigger == 2:
@@ -223,7 +242,11 @@ class Spectrometer():
         """
             This function returns the max intensity of the connected spectrometer
         """
-        print(self.spec.max_intensity)
+        self._check_connection()
+        if self.states_spectrometer == 2:
+            print("\nPlease set up your spectrometer and retry...\n")
+            return None
+        print("\n{}\n".format(self.spec.max_intensity))
         return None
 
     def multiple_integrate(self, trigger, microseconds, integrations, integration_type):    # trigger(int) - trigger mode(0, 1, or 3)
@@ -233,6 +256,7 @@ class Spectrometer():
         """                                                                     
             This function is meant to request multiple integrations one after the other
         """
+        self._check_connection()
         if self.states_spectrometer == 0:
             if integration_type == 0 or integration_type == 1 or integration_type == 2:
                 if trigger <= 3 and trigger >= 0 and trigger != 2:
