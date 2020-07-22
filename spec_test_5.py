@@ -282,7 +282,7 @@ class Spectrometer():
                             wavelengths = self.spec.wavelengths()
                         elif integration_type == 2:
                             intensities = self.spec.intensities()
-                        print(sleep_timers.time - t)
+                        print(sleep_timers.time() - t)
 
                         print("\n-----------------------\n")
                         print("Integration number: {}\n".format(n+1))
