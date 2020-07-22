@@ -274,7 +274,7 @@ class Spectrometer():
                     self.spec.integration_time_micros(microseconds)
 
                     for n in range(integrations):
-                        t = time.time()
+                        t = sleep_timers.time()
                         if integration_type == 0:
                             wavelengths, intensities = self.spec.spectrum()
                             spectrum = wavelengths, intensities
@@ -282,7 +282,7 @@ class Spectrometer():
                             wavelengths = self.spec.wavelengths()
                         elif integration_type == 2:
                             intensities = self.spec.intensities()
-                        print(time.time - t)
+                        print(sleep_timers.time - t)
 
                         print("\n-----------------------\n")
                         print("Integration number: {}\n".format(n+1))
