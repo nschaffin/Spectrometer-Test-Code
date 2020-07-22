@@ -70,7 +70,8 @@ seabreeze.use("cseabreeze") # Used for backend function calls, like in initializ
 class Spectrometer():
     
     def __init__(self):
-        self.spec = self.connect()
+        self.spec = None
+        self.connect()
         self.states_spectrometer = 0
     
     def connect(self):
@@ -146,7 +147,7 @@ class Spectrometer():
                 minMax = self.spec.integration_time_micros_limits
                 print("\n{}\n".format(minMax))
             if test_num == 1:
-                minMax = spec.f.spectrometer.get_integration_time_micros_limits
+                minMax = self.spec.f.spectrometer.get_integration_time_micros_limits
                 print("\n{}\n".format(minMax))
             else:
                 print("\nInvalid test number given, please enter a valid number and retry...")

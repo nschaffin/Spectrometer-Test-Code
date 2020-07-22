@@ -4,7 +4,7 @@ Manages communication with the spectrometer through the SeaBreeze library.
 import time as sleep_timers
 
 import seabreeze
-seabreeze.use('pyseabreeze')
+seabreeze.use('cseabreeze')
 import seabreeze.spectrometers
 
 
