@@ -119,7 +119,7 @@ class Spectrometer():
         """
             This function is meant to reenumerate all spectrometers connected to a system
         """
-        self._check_connection()
+        #self._check_connection()
         if self.states_spectrometer == 2:
             if test_num == 0:
                 psbAPI = seabreeze.pyseabreeze.SeaBreezeAPI()               # Making pyseabreeze backend API object
@@ -140,7 +140,7 @@ class Spectrometer():
         """
             This function is meant to obtain a spectrometer's minimum and maximum integration times
         """
-        self._check_connection()
+        #self._check_connection()
         if self.states_spectrometer == 0:
             if test_num == 0:
                 minMax = self.spec.integration_time_micros_limits
@@ -158,7 +158,7 @@ class Spectrometer():
         """
             This function is meant to print out all features available to a spectrometer
         """
-        self._check_connection()
+        #self._check_connection()
         if self.states_spectrometer == 2:
             print("\nPlease set up your spectrometer and retry...\n")
             return None
@@ -169,7 +169,7 @@ class Spectrometer():
         """
             This function is meant to integrate only once
         """
-        self._check_connection()
+        #self._check_connection()
         if trigger < 0 or trigger > 3 or trigger == 2:
             print("\nInvalid trigger mode\n")
             return None
@@ -196,7 +196,7 @@ class Spectrometer():
         """
             This function is meant to grab only wavelengths from an integration
         """
-        self._check_connection()
+        #self._check_connection()
         if test_num != 0 and test_num != 1:
             print("\nInvalid test number\n")
             return None
@@ -224,7 +224,7 @@ class Spectrometer():
         """
             This function is meant to grab only intesities from an integration
         """
-        self._check_connection()
+        #self._check_connection()
         if test_num != 0 and test_num != 1:
             print("\nInvalid test number\n")
             return None
@@ -251,7 +251,7 @@ class Spectrometer():
         """
             This function returns the max intensity of the connected spectrometer
         """
-        self._check_connection()
+        #self._check_connection()
         if self.states_spectrometer == 2:
             print("\nPlease set up your spectrometer and retry...\n")
             return None
@@ -265,7 +265,7 @@ class Spectrometer():
         """                                                                     
             This function is meant to request multiple integrations one after the other
         """
-        self._check_connection()
+        #self._check_connection()
         if self.states_spectrometer == 0:
             if integration_type == 0 or integration_type == 1 or integration_type == 2:
                 if trigger <= 3 and trigger >= 0 and trigger != 2:
