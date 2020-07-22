@@ -10,22 +10,28 @@
         * Included is a sleep timer that is changeable
             * This can be used to test unplugging and replugging in our spectrometer while this command is ongoing
 
-    initialize()
+    initialize(test_num)
         * This resets all usb devices on load
         * Can be used to possibly re-enumerate our spectrometer devices
 
-    min_max()
+    min_max(test_num)
         * This tests the minimum and maximum integration times our spectrometer can handle
+
+    features()
+        * This shows all the features unique to the connected spectrometer
 
     quick_integrate(trigger, microseconds)
         * This will make the spectrometer integrate just once
         * It will also print out spectrum, wavelengths, and intensities (this will also include the length of each of these lists)
 
-    wavelengths_integrate(trigger, microseconds)
+    wavelengths_integrate(trigger, microseconds, test_num)
         * This will make the spectrometer integrate and only return wavelengths
 
-    intensities_integrate(trigger, microseconds)
+    intensities_integrate(trigger, microseconds, test_num)
         * This will make the spectrometer integrate and only return intensities
+
+    max_intensity()
+        * This function returns the maximum intensity of the spectrometer
 
     multiple_integrate(trigger, microseconds, integrations, type)
         * This will allow for the spectrometer to integrate multiple times (also this will be dependent on the type of parameters)
@@ -42,9 +48,13 @@ Test Stuff:
 """
 import time as sleep_timers
 
+
+import seabreeze.pyseabreeze
+import seabreeze.cseabreeze
 import seabreeze
-#seabreeze.use('pyseabreeze')               # This may work, this may not (incase if errors, just comment it out). This is also used in initialize().
 import seabreeze.spectrometers
+seabreeze.use("cseabreeze")
+
 
 class Spectrometer():
     
@@ -84,26 +94,42 @@ class Spectrometer():
         return None
 
 
-    def initialize(self):
+    def initialize(self, test_num):                                                         # test_num(int): 0 - using pyseabreeze, 1 - using cseabreeze
         """
             This function is meant to reenumerate all spectrometers connected to a system
         """
         if self.states_spectrometer == 0:
-            seabreeze.pyseabreeze.SeaBreezeAPI.initialize()
+            if test_num == 0:
+                seabreeze.pyseabreeze.SeaBreezeAPI.initialize()
+            if test_num == 1:
+                seabreeze.cseabreeze.SeaBreezeAPI.initialize()
             print("\nDevices now present: {}\n".format(seabreeze.spectrometers.list_devices()))
         else:
             print("\nPlease set up your spectrometer and retry...\n")
         return None
 
-    def min_max(self):
+    def min_max(self, test_num):                                        # test_num(int): 0 - limits, 1 - get limits
         """
             This function is meant to obtain a spectrometer's minimum and maximum integration times
         """
         if self.states_spectrometer == 0:
-            minMax = self.spec.get_integration_time_micros_limits()
-            print("\n{}\n".format(minMax))
+            if test_num == 0:
+                minMax = self.spec.integration_time_micros_limits
+                print("\n{}\n".format(minMax))
+            if test_num == 1:
+                minMax = spec.f.spectrometer.get_integration_time_micros_limits
+                print("\n{}\n".format(minMax))
+            else:
+                print("\nInvalid test number given, please enter a valid number and retry...")
         else:
             print("\nPlease set up your spectrometer and retry...\n")
+        return None
+
+    def features(self):
+        """
+            This function is meant to print out all features available to a spectrometer
+        """
+        print(self.spec.features)
         return None
     
     def quick_integrate(self, trigger, microseconds):                   # trigger(int) - trigger mode | microseconds(int) - integration time
@@ -131,10 +157,14 @@ class Spectrometer():
             print("\nPlease set up your spectrometer and retry...\n")
         return None
 
-    def wavelengths_integrate(self, trigger, microseconds):              # trigger(int) - trigger mode | microseconds(int) - integration time
+    def wavelengths_integrate(self, trigger, microseconds, test_num):                   # trigger(int) - trigger mode | microseconds(int) - integration time
+                                                                                        # test_num(int): 0 - quickstart wavelengths, 1 - get wavelengths
         """
             This function is meant to grab only wavelengths from an integration
         """
+        if test_num != 0 or test_num != 1:
+            print("\nInvalid test number\n")
+            return None
         if trigger < 0 or trigger > 3 or trigger == 2:
             print("\nInvalid trigger mode\n")
             return None
@@ -143,7 +173,10 @@ class Spectrometer():
             self.spec.trigger_mode(trigger)
             self.spec.integration_time_micros(microseconds)
 
-            wavelengths = self.spec.get_wavelengths()
+            if test_num == 0:
+                wavelengths = self.spec.wavelengths()
+            if test_num == 1:
+                wavelengths = spec.f.spectrometer.get_wavelengths()
 
             print("\nWavelengths: {}".format(wavelengths))
             print("Wavelengths length: {}\n".format(len(wavelengths)))
@@ -151,10 +184,14 @@ class Spectrometer():
             print("\nPlease set up your spectrometer and retry...\n")
         return None
 
-    def intensities_integrate(self, trigger, microseconds):             # trigger(int) - trigger mode | microseconds(int) - integration time
+    def intensities_integrate(self, trigger, microseconds, test_num):               # trigger(int) - trigger mode | microseconds(int) - integration time
+                                                                                    # test_num(int): 0 - quickstart intensities, 1 - get intensities
         """
             This function is meant to grab only intesities from an integration
         """
+        if test_num != 0 or test_num != 1:
+            print("\nInvalid test number\n")
+            return None
         if trigger < 0 or trigger > 3 or trigger == 2:
             print("\nInvalid trigger mode\n")
             return None
@@ -163,12 +200,22 @@ class Spectrometer():
             self.spec.trigger_mode(trigger)
             self.spec.integration_time_micros(microseconds)
 
-            intensities = self.spec.get_intensities()
+            if test_num == 0:
+                intensities = self.spec.intensities()
+            if test_num == 1:
+                intensities = spec.f.spectrometer.get_intensities()
 
             print("\nIntensities: {}".format(intensities))
             print("Intensities length: {}\n".format(len(intensities)))
         else:
             print("\nPlease set up your spectrometer and retry...\n")
+        return None
+
+    def max_intensity(self):
+        """
+            This function returns the max intensity of the connected spectrometer
+        """
+        print(self.spec.max_intensity)
         return None
 
     def multiple_integrate(self, trigger, microseconds, integrations, integration_type):    # trigger(int) - trigger mode(0, 1, or 3)
@@ -189,9 +236,9 @@ class Spectrometer():
                             wavelengths, intensities = self.spec.spectrum()
                             spectrum = wavelengths, intensities
                         elif integration_type == 1:
-                            wavelengths = self.spec.get_wavelengths()
+                            wavelengths = self.spec.wavelengths()
                         elif integration_type == 2:
-                            intensities = self.spec.get_intensities()
+                            intensities = self.spec.intensities()
                         
                         print("\n-----------------------\n")
                         print("Integration number: {}\n".format(n+1))
