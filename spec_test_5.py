@@ -10,6 +10,11 @@
         * Included is a sleep timer that is changeable
             * This can be used to test unplugging and replugging in our spectrometer while this command is ongoing
 
+    _check_connection()
+        * Not really something you need to test
+        * This is a barebones version of connect()
+        * Most classes call this function to check the current status of the spectrometer
+
     initialize(test_num)
         * This resets all usb devices on load
         * Can be used to possibly re-enumerate our spectrometer devices
@@ -44,8 +49,12 @@ Test Stuff:
     * Spec_test_4.py is fixed, but this program incorporates mostly if not all features from previous tests
     * We are using list_devices() to setup spectrometer instead of from_first_available(), this can be swapped out if needed
     * Also, we should see if the spectrometer only blinks once for everytime the spectrometer integrates in especially in multiple_integrate()
+    * For backend function calls with 'f', see https://python-seabreeze.readthedocs.io/en/latest/_modules/seabreeze/spectrometers.html
     * As a final side note, this program is also rather flexible, so you can just straight up use seabreeze commands instead of using the given functions
     * As a final final side note, pyseabreeze seems to have a pretty bad backend from messing around with things before even testing, so I'd advise using the cseabreeze wrapper
+
+Sources:
+    * https://python-seabreeze.readthedocs.io/en/latest/index.html
 """
 import time as sleep_timers
 
@@ -53,7 +62,7 @@ import seabreeze.pyseabreeze
 import seabreeze.cseabreeze
 import seabreeze
 import seabreeze.spectrometers
-seabreeze.use("cseabreeze")
+seabreeze.use("cseabreeze") # Used for backend function calls, like in initialize()
 
 #import usb.core        # Not sure if pyusb is called already in the backend for pyseabreeze
 #import usb.util
@@ -106,18 +115,18 @@ class Spectrometer():
             self.states_spectrometer = 2                                    # Disconnected state
             return None
 
-    def initialize(self, test_num):                                                         # test_num(int): 0 - using pyseabreeze, 1 - using cseabreeze
+    def initialize(self, test_num):                                         # test_num(int): 0 - using pyseabreeze, 1 - using cseabreeze
         """
             This function is meant to reenumerate all spectrometers connected to a system
         """
         self._check_connection()
         if self.states_spectrometer == 2:
             if test_num == 0:
-                psbAPI = seabreeze.pyseabreeze.SeaBreezeAPI()   # Making pyseabreeze backend API object
-                psbAPI.initialize()                             # Seems that the pyseabreeze backend doesn't support this function
+                psbAPI = seabreeze.pyseabreeze.SeaBreezeAPI()               # Making pyseabreeze backend API object
+                psbAPI.initialize()                                         # Seems that the pyseabreeze backend doesn't support this function
             elif test_num == 1:
-                csbAPI = seabreeze.cseabreeze.SeaBreezeAPI()    # Making cseabreeze backend API object
-                csbAPI.initialize()                             # This is the only one i've gotten working
+                csbAPI = seabreeze.cseabreeze.SeaBreezeAPI()                # Making cseabreeze backend API object
+                csbAPI.initialize()                                         # This is the only one i've gotten working
             else:
                 print("\nInvalid test number\n")
                 return None
@@ -127,7 +136,7 @@ class Spectrometer():
             print("\nYour spectrometer has already been setup...\n")
         return None
 
-    def min_max(self, test_num):                                        # test_num(int): 0 - limits, 1 - get limits
+    def min_max(self, test_num):                                            # test_num(int): 0 - limits, 1 - get limits
         """
             This function is meant to obtain a spectrometer's minimum and maximum integration times
         """
@@ -156,7 +165,7 @@ class Spectrometer():
         print("\n{}\n".format(self.spec.features))
         return None
     
-    def quick_integrate(self, trigger, microseconds):                   # trigger(int) - trigger mode | microseconds(int) - integration time
+    def quick_integrate(self, trigger, microseconds):                       # trigger(int) - trigger mode | microseconds(int) - integration time
         """
             This function is meant to integrate only once
         """
@@ -182,8 +191,8 @@ class Spectrometer():
             print("\nPlease set up your spectrometer and retry...\n")
         return None
 
-    def wavelengths_integrate(self, trigger, microseconds, test_num):                   # trigger(int) - trigger mode | microseconds(int) - integration time
-                                                                                        # test_num(int): 0 - quickstart wavelengths, 1 - get wavelengths
+    def wavelengths_integrate(self, trigger, microseconds, test_num):       # trigger(int) - trigger mode | microseconds(int) - integration time
+                                                                            # test_num(int): 0 - quickstart wavelengths, 1 - get wavelengths
         """
             This function is meant to grab only wavelengths from an integration
         """
@@ -210,8 +219,8 @@ class Spectrometer():
             print("\nPlease set up your spectrometer and retry...\n")
         return None
 
-    def intensities_integrate(self, trigger, microseconds, test_num):               # trigger(int) - trigger mode | microseconds(int) - integration time
-                                                                                    # test_num(int): 0 - quickstart intensities, 1 - get intensities
+    def intensities_integrate(self, trigger, microseconds, test_num):           # trigger(int) - trigger mode | microseconds(int) - integration time
+                                                                                # test_num(int): 0 - quickstart intensities, 1 - get intensities
         """
             This function is meant to grab only intesities from an integration
         """
