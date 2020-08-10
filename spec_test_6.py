@@ -26,12 +26,13 @@ class Spectrometer():
 	# 	is_open = self.spec.is_open
 	# 	print(is_open)
 
-	"""
-	Attempt to break connection and fix it by opening and closing it
-	"""
-	def break_connection1(self):
+	def reconnect(self):
 		self.spec = self._setupSpectrometer()
-		self.spec = self._setupSpectrometer()
+
+	"""
+	Attempt to fix connection by opening and closing it
+	"""
+	def fix1(self):
 		print(f'The spectrometer connection is now: {self.test_connection()}\n')
 		print('Closing connection...')
 		self.spec.close()
@@ -41,11 +42,9 @@ class Spectrometer():
 		print(f'The spectrometer connection is now: {self.test_connection()}\n')
 
 	"""
-	Attempt to break connection and fix it by closing and reconnecting it
+	Attempt to fix connection by closing and reconnecting it
 	"""
-	def break_connection2(self):
-		self.spec = self._setupSpectrometer()
-		self.spec = self._setupSpectrometer()
+	def fix2(self):
 		print(f'The spectrometer connection is now: {self.test_connection()}\n')
 		print('Closing connection...')
 		self.spec.close()
@@ -55,11 +54,9 @@ class Spectrometer():
 		print(f'The spectrometer connection is now: {self.test_connection()}\n')
 
 	"""
-	Attempt to break connection and fix it by setting the variable to None and reconnecting it
+	Attempt to fix connection by setting the variable to None and reconnecting it, this should fail due to memory allocation issues
 	"""
-	def break_connection3(self):
-		self.spec = self._setupSpectrometer()
-		self.spec = self._setupSpectrometer()
+	def fix3(self):
 		print(f'The spectrometer connection is now: {self.test_connection()}\n')
 		print('Setting Spectrometer to None to test if it disconnects spectrometer...')
 		self.spec = None
@@ -68,14 +65,26 @@ class Spectrometer():
 		self.spec = _setupSpectrometer()
 		print(f'The spectrometer connection is now: {self.test_connection()}\n')
 
-	def set_trigger(self, int=4):
-		self.spec.trigger_mode(int)
+	def set_trigger(self, num=0):
+		self.spec.trigger_mode(num)
 
 	def integrate(self, test_time=20):
 		self.spec.integration_time_micros(test_time*1000)
 		wavelengths, intensities = self.spec.spectrum()
-		print(intensities)
+		# print(intensities)
+		if intensities == []:
+			print("No data retrieved...\n")
+		elif intensities == None:
+			print("No data retrieved...\n")
 		return intensities
+
+	"""
+	There shouldn't be any connection to the spectrometer so this should fail
+	"""
+	def fail_integrate(self):
+		self.spec.close()
+		self.integrate()
+		self.spec.open()
 
 	"""
 	Checks if the change from trigger mode 0 to trigger mode 4 was successful, otherwise switches to trigger mode 0
@@ -92,9 +101,10 @@ class Spectrometer():
 		print("The data is the same therefore there was no trigger, switching to normal trigger mode for gathering new data.")
 
 	"""
-	2 possibilities for when trigger mode is 4 and external triggering fails
+	3 possibilities for when trigger mode is 4 and external triggering fails
 	1. it hangs forever since it never receives the high signal so it'll never return a spectrum
 	2. it returns the last spectrum taken so the method to solve it may be the same as compare_data() if it worked
+	3. nothing is returned, all data is cleared after each integration
 	"""
 	# def compare_data2(self):
 
